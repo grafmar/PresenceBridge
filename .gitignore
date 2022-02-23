@@ -3,3 +3,9 @@
 ################################################################################
 
 /.vs
+/src/.vs/PresenceBridge/v16
+/src/bin/Debug/netcoreapp3.1
+/src/obj
+/src/.vs/PresenceBridge/config
+/src/bin/Debug
+/src/packages
