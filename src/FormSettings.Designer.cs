@@ -50,6 +50,7 @@ namespace PresenceBridge
 			this.btnLogin = new System.Windows.Forms.Button();
 			this.btnReload = new System.Windows.Forms.Button();
 			this.btnSave = new System.Windows.Forms.Button();
+			this.timerPeriodic = new System.Windows.Forms.Timer(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxFoto)).BeginInit();
 			this.SuspendLayout();
@@ -59,6 +60,7 @@ namespace PresenceBridge
 			this.SystemTrayIcon.Text = "SystemTrayIcon";
 			this.SystemTrayIcon.Visible = true;
 			this.SystemTrayIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SystemTrayIcon_MouseClick);
+			this.SystemTrayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.SystemTrayIcon_MouseDoubleClick);
 			// 
 			// btnAvailable
 			// 
@@ -250,6 +252,11 @@ namespace PresenceBridge
 			this.btnSave.UseVisualStyleBackColor = true;
 			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
 			// 
+			// timerPeriodic
+			// 
+			this.timerPeriodic.Interval = 1000;
+			this.timerPeriodic.Tick += new System.EventHandler(this.timerPeriodic_Tick);
+			// 
 			// FormSettings
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -305,6 +312,7 @@ namespace PresenceBridge
 		private System.Windows.Forms.Button btnLogin;
 		private System.Windows.Forms.Button btnReload;
 		private System.Windows.Forms.Button btnSave;
+		private System.Windows.Forms.Timer timerPeriodic;
 	}
 }
 

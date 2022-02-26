@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 using Microsoft.Graph; // NuGet Package
+using Microsoft.Identity; // NuGet Package
+using Microsoft.Identity.Client;
 using Azure.Identity;  // NuGet Package
 
 
@@ -17,6 +19,10 @@ namespace PresenceBridge
 {
 	public partial class FormSettings : Form
 	{
+		private static SerialLed serialLed = new SerialLed();
+		private static GraphHandler graphHandler = new GraphHandler();
+		private static bool executingTimer = false;
+
 		public FormSettings()
 		{
 			InitializeComponent();
@@ -45,6 +51,8 @@ namespace PresenceBridge
 			//updateColorDescriptions();
 			applySettings();
 			getSerialPorts();
+
+			doLogin();
 		}
 
 		private void ContextMenuSettings(object sender, EventArgs e)
@@ -87,29 +95,9 @@ namespace PresenceBridge
 			if (MyDialog.ShowDialog() == DialogResult.OK)
 				(sender as Button).BackColor = MyDialog.Color;
 
-			//if ((comboBox1.SelectedItem != null) && (comboBox1.SelectedItem.ToString() != ""))
-			//{
-			//	SerialPort _serialPort = new SerialPort(comboBox1.SelectedItem.ToString(), 115200, Parity.None, 8, StopBits.One);
-			//	_serialPort.Handshake = Handshake.None;
-			//	try
-			//	{
-			//		if (!(_serialPort.IsOpen))
-			//		{
-			//			_serialPort.Open();
+			serialLed.setLedColor(MyDialog.Color);
 
-
-			//			_serialPort.Write("rgb:" + MyDialog.Color.R + "," + MyDialog.Color.G + "," + MyDialog.Color.B + "\r\n");
-			//			_serialPort.Close();
-			//		}
-			//	}
-			//	catch (Exception ex)
-			//	{
-			//		MessageBox.Show("Error opening/writing to serial port :: " + ex.Message, "Error!");
-			//	}
-			//	updateColorDescriptions();
-			//}
 			saveSettings();
-
 		}
 
 		private void trackBarBrightness_Scroll(object sender, EventArgs e)
@@ -157,6 +145,8 @@ namespace PresenceBridge
 		}
 		private void setPresenceColor(Color color)
 		{
+			serialLed.setLedColor(color);
+
 			// Alter System Tray Icon color
 			Bitmap bmp = SystemTrayIcon.Icon.ToBitmap();
 			using (Graphics gr = Graphics.FromImage(bmp))
@@ -203,26 +193,185 @@ namespace PresenceBridge
 		}
 
 
-		private void btnLogin_Click(object sender, EventArgs e)
+		private async void btnLogin_Click(object sender, EventArgs e)
 		{
 			if (btnLogin.Text == "Logout")
 			{
-				doLogout();
+				graphHandler.Logout();
+				//await SetColor("Off").ConfigureAwait(true);
+				pictureBoxFoto.Visible = false;
+				setPresenceColor(System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorOffline));
+				timerPeriodic.Stop();
+
+				//doLogout();
 				btnLogin.Text = "Login";
 			}
 			else
 			{
 				doLogin();
-				btnLogin.Text = "Logout";
 			}
 		}
 
-		private async void doLogout()
-		{ 
+		private void setPhoto(System.IO.Stream photo)
+		{
+			if (photo != null)
+			{
+				System.IO.MemoryStream ms = new System.IO.MemoryStream();
+				photo.CopyTo(ms);
+				Bitmap bmp = new Bitmap(System.Drawing.Image.FromStream(ms), pictureBoxFoto.Size);
+				pictureBoxFoto.Image = ClipToCircle(bmp);
+				pictureBoxFoto.Visible = true;
+			}
+			else
+			{
+				// create image for Profile Photo if none is set
+				pictureBoxFoto.Image = new Bitmap(pictureBoxFoto.Width, pictureBoxFoto.Height);
+			}
 		}
 
 		private async void doLogin()
 		{
+			graphHandler.Login();
+
+			setPhoto(await graphHandler.GetPhoto());
+			setPresenceColor(getColorFromPresence((await graphHandler.GetPresence())));
+			timerPeriodic.Start();
+
+			// doLogin();
+			btnLogin.Text = "Logout";
+
+			/*
+			//graphClient = GraphService.Get
+
+			List<string> scopes = new List<string>
+			{
+				"https://graph.microsoft.com/.default"
+			};
+
+			var clientId = "3bd2647e-821e-48dd-a4b3-158e87fd7945";
+			//var pca = PublicClientApplicationBuilder.Create(aadSettings.ClientId)
+			var pca = PublicClientApplicationBuilder.Create(clientId)
+													//var pca = PublicClientApplicationBuilder.Create(aadSettings.ClientId)
+													//.WithAuthority($"{aadSettings.Instance}common/")
+													.WithRedirectUri(Properties.Settings.Default.RedirectUri)
+													.Build();
+
+			//TokenCacheHelper.EnableSerialization(pca.UserTokenCache);
+
+			//var authProvider = new WPFAuthorizationProvider(pca, scopes);
+
+			var accounts = await pca.GetAccountsAsync().ConfigureAwait(true);
+			Microsoft.Identity.Client.AuthenticationResult result;
+			try
+			{
+				result = await pca.AcquireTokenSilent(scopes, accounts.FirstOrDefault()).ExecuteAsync();
+			}
+			catch (Microsoft.Identity.Client.MsalUiRequiredException)
+			{
+				result = await pca.AcquireTokenInteractive(scopes).ExecuteAsync();
+			}
+
+
+			var graphScopes = new[] { "User.Read", "Presence.Read" };
+			var graphClient = new GraphServiceClient(result.AccessToken, graphScopes);
+
+
+
+			// Get account photo
+			System.IO.Stream photo = await graphClient.Me.Photo.Content.Request().GetAsync();
+			if (photo != null)
+			{
+				System.IO.MemoryStream ms = new System.IO.MemoryStream();
+				photo.CopyTo(ms);
+				Bitmap bmp = new Bitmap(System.Drawing.Image.FromStream(ms), pictureBoxFoto.Size);
+				pictureBoxFoto.Image = ClipToCircle(bmp);
+			}
+			else
+			{
+				// create image for Profile Photo if none is set
+				pictureBoxFoto.Image = new Bitmap(pictureBoxFoto.Width, pictureBoxFoto.Height);
+			}
+
+			Presence presence = await graphClient.Me.Presence.Request().GetAsync();
+			setPresenceColor(getColorFromPresence(presence));
+
+
+			*/
+
+
+
+			/*
+
+
+
+			var scopes = new[] { "User.Read", "Presence.Read" };
+
+			// Multi-tenant apps can use "common",
+			// single-tenant apps must use the tenant ID from the Azure portal
+			var tenantId = "common";
+
+			// Value from app registration
+			var clientId = "3bd2647e-821e-48dd-a4b3-158e87fd7945";
+			//Microsoft.Identity.Client.IPublicClientApplication
+
+			var app = Microsoft.Identity.Client.PublicClientApplicationBuilder.Create(clientId).Build();
+			var accounts = await app.GetAccountsAsync();
+			Microsoft.Identity.Client.AuthenticationResult result;
+			try
+			{
+				result = await app.AcquireTokenSilent(scopes, accounts.FirstOrDefault()).ExecuteAsync();
+			}
+			catch (Microsoft.Identity.Client.MsalUiRequiredException)
+			{
+				result = await app.AcquireTokenInteractive(scopes).ExecuteAsync();
+			}
+
+			// using Azure.Identity;
+			var options = new TokenCredentialOptions
+			{
+				AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
+			};
+
+			// Callback function that receives the user prompt
+			// Prompt contains the generated device code that use must
+			// enter during the auth process in the browser
+			Func<DeviceCodeInfo, System.Threading.CancellationToken, Task> callback = (code, cancellation) => {
+				Console.WriteLine(code.Message);
+				return Task.FromResult(0);
+			};
+
+			// https://docs.microsoft.com/dotnet/api/azure.identity.devicecodecredential
+			var deviceCodeCredential = new DeviceCodeCredential(
+				callback, tenantId, clientId, options);
+
+			var graphClient = new GraphServiceClient(deviceCodeCredential, scopes);
+
+
+
+			// Get account photo
+			System.IO.Stream photo = await graphClient.Me.Photo.Content.Request().GetAsync();
+			if (photo != null)
+			{
+				System.IO.MemoryStream ms = new System.IO.MemoryStream();
+				photo.CopyTo(ms);
+				Bitmap bmp = new Bitmap(System.Drawing.Image.FromStream(ms), pictureBoxFoto.Size);
+				pictureBoxFoto.Image = ClipToCircle(bmp);
+			}
+			else
+			{
+				// create image for Profile Photo if none is set
+				pictureBoxFoto.Image = new Bitmap(pictureBoxFoto.Width, pictureBoxFoto.Height);
+			}
+
+			Presence presence = await graphClient.Me.Presence.Request().GetAsync();
+			setPresenceColor(getColorFromPresence(presence));
+
+
+			*/
+
+
+
+			/*
 			var scopes = new[] { "User.Read", "Presence.Read" };
 			// multi-tenant apps can use "common",
 			// single-tenant apps must use the tenant id from the azure portal
@@ -231,6 +380,7 @@ namespace PresenceBridge
 			// value from app registration
 			//var clientId = Properties.Settings.Default.ClientId;
 			var clientId = "3bd2647e-821e-48dd-a4b3-158e87fd7945";
+
 
 			// using Azure.Identity;
 			var options = new InteractiveBrowserCredentialOptions
@@ -249,6 +399,9 @@ namespace PresenceBridge
 
 			var graphClient = new GraphServiceClient(interactiveCredential, scopes);
 
+			var requestContext = new Azure.Core.TokenRequestContext(scopes, clientId, null, tenantId);
+			var result = await interactiveCredential.GetTokenAsync(requestContext);
+			Properties.Settings.Default.Token = result.Token;
 			//var user = await graphClient.Me.Request().GetAsync();
 
 			// Get account photo
@@ -268,6 +421,11 @@ namespace PresenceBridge
 
 			Presence presence = await graphClient.Me.Presence.Request().GetAsync();
 			setPresenceColor(getColorFromPresence(presence));
+			*/
+
+
+
+
 
 			//interactiveCredential.Authenticate();
 
@@ -325,6 +483,21 @@ namespace PresenceBridge
 		private void SystemTrayIcon_MouseClick(object sender, MouseEventArgs e)
 		{
 			ContextMenuSettings(sender, e);
+		}
+
+		private void SystemTrayIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			ContextMenuSettings(sender, e);
+		}
+
+		private async void timerPeriodic_Tick(object sender, EventArgs e)
+		{
+			if (!executingTimer) // only enter if the last one is finished
+			{
+				executingTimer = true;
+				setPresenceColor(getColorFromPresence((await graphHandler.GetPresence())));
+				executingTimer = false;
+			}
 		}
 	}
 }

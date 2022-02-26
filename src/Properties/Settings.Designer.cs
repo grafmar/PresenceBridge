@@ -115,5 +115,14 @@ namespace PresenceBridge.Properties {
                 this["SerialPort"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost")]
+        public string RedirectUri {
+            get {
+                return ((string)(this["RedirectUri"]));
+            }
+        }
     }
 }
