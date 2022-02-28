@@ -11,7 +11,6 @@ namespace PresenceBridge
 {
 	class SerialLed
 	{
-		private static string usedPort = "";
 		SerialPort _serialPort = new SerialPort();
 
 		public SerialLed()
@@ -24,45 +23,61 @@ namespace PresenceBridge
 
 		private void openPort()
 		{
-			_serialPort.PortName = Properties.Settings.Default.SerialPort;
+			try
+			{
+				if (_serialPort.PortName != Properties.Settings.Default.SerialPort)
+				{
+					if (_serialPort.IsOpen)
+					{
+						_serialPort.Close(); // Close old opened port
+					}
+					_serialPort.PortName = Properties.Settings.Default.SerialPort; // Set new port
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Error closing serial port :: " + ex.Message, "Error!");
+			}
+
+			try
+			{
+				if (!_serialPort.IsOpen)
+				{
+					_serialPort.Open(); // Open serial port
+				}
+			}
+			catch (Exception ex)
+			{
+				//MessageBox.Show("Error opening serial port :: " + ex.Message, "Error!");
+			}
+		}
+
+		public void Close()
+		{
+			try
+			{
+				if (_serialPort.IsOpen)
+				{
+					_serialPort.Close();
+				}
+			}
+			catch (Exception ex) { }
 		}
 
 		public void setLedColor(Color color)
 		{
-			_serialPort.PortName = Properties.Settings.Default.SerialPort;
-			try
+			openPort();
+			if (_serialPort.IsOpen)
 			{
-				_serialPort.Open();
-
-
-				_serialPort.Write("rgb:" + color.R + "," + color.G + "," + color.B + "\r\n");
-				_serialPort.Close();
+				try
+				{
+					_serialPort.Write("rgb:" + color.R + "," + color.G + "," + color.B + "\r\n");
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show("Could not send message on open serial port :: " + ex.Message, "Error!");
+				}
 			}
-			catch (Exception ex)
-			{
-				//MessageBox.Show("Error opening/writing to serial port :: " + ex.Message, "Error!");
-			}
-			//if ((comboBox1.SelectedItem != null) && (comboBox1.SelectedItem.ToString() != ""))
-			//{
-			//	SerialPort _serialPort = new SerialPort(comboBox1.SelectedItem.ToString(), 115200, Parity.None, 8, StopBits.One);
-			//	_serialPort.Handshake = Handshake.None;
-			//	try
-			//	{
-			//		if (!(_serialPort.IsOpen))
-			//		{
-			//			_serialPort.Open();
-
-
-			//			_serialPort.Write("rgb:" + MyDialog.Color.R + "," + MyDialog.Color.G + "," + MyDialog.Color.B + "\r\n");
-			//			_serialPort.Close();
-			//		}
-			//	}
-			//	catch (Exception ex)
-			//	{
-			//		MessageBox.Show("Error opening/writing to serial port :: " + ex.Message, "Error!");
-			//	}
-			//	updateColorDescriptions();
-			//}
 		}
 	}
 }

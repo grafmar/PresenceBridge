@@ -19,6 +19,7 @@ namespace PresenceBridge
 {
 	public partial class FormSettings : Form
 	{
+		private static bool serialPortConfiguredAvailable = false;
 		private static SerialLed serialLed = new SerialLed();
 		private static GraphHandler graphHandler = new GraphHandler();
 		private static bool executingTimer = false;
@@ -52,6 +53,11 @@ namespace PresenceBridge
 			applySettings();
 			getSerialPorts();
 
+			if (!serialPortConfiguredAvailable)
+			{
+				MessageBox.Show("Configured serial port \"" + Properties.Settings.Default.SerialPort + "\" is not available! Try to configure correct serail port.");
+			}
+
 			doLogin();
 		}
 
@@ -64,6 +70,8 @@ namespace PresenceBridge
 
 		private void ContextMenuExit(object sender, EventArgs e)
 		{
+			setPresenceColor(System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorOffline));
+			serialLed.Close();
 			this.SystemTrayIcon.Visible = false;
 			System.Windows.Forms.Application.Exit();
 			Environment.Exit(0);
@@ -138,11 +146,17 @@ namespace PresenceBridge
 		{
 			string[] ports = SerialPort.GetPortNames();
 			comboBoxSerialPort.Items.Clear();
+			serialPortConfiguredAvailable = false;
 			foreach (string s in SerialPort.GetPortNames())
 			{
 				comboBoxSerialPort.Items.Add(s);
+				if (s == Properties.Settings.Default.SerialPort)
+				{
+					serialPortConfiguredAvailable = true;
+				}
 			}
 		}
+
 		private void setPresenceColor(Color color)
 		{
 			serialLed.setLedColor(color);
