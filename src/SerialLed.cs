@@ -46,7 +46,7 @@ namespace PresenceBridge
 					_serialPort.Open(); // Open serial port
 				}
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				//MessageBox.Show("Error opening serial port :: " + ex.Message, "Error!");
 			}
@@ -61,7 +61,14 @@ namespace PresenceBridge
 					_serialPort.Close();
 				}
 			}
-			catch (Exception ex) { }
+			catch (Exception ex) {
+				MessageBox.Show("Exception in SerialLed::Close():\n" + ex.Message);
+			}
+		}
+
+		private int Clamp(int value, int min, int max)
+		{
+			return Math.Min(Math.Max(value, min), max);
 		}
 
 		public void setLedColor(Color color)
@@ -71,7 +78,12 @@ namespace PresenceBridge
 			{
 				try
 				{
-					_serialPort.Write("rgb:" + color.R + "," + color.G + "," + color.B + "\r\n");
+					var factor = Clamp(Properties.Settings.Default.Brightness, 0, 100) / 100.0;
+					var newColor = Color.FromArgb(
+						(int)(color.R * factor),
+						(int)(color.G * factor),
+						(int)(color.B * factor));
+					_serialPort.Write("rgb:" + newColor.R + "," + newColor.G + "," + newColor.B + "\r\n");
 				}
 				catch (Exception ex)
 				{

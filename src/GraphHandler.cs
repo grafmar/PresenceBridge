@@ -18,7 +18,7 @@ namespace PresenceBridge
             _graphServiceClient = graphservice.GetAuthenticatedGraphClient();
         }
 
-        public async void Logout()
+        public void Logout()
         {
 			//System.Collections.Generic.IEnumerable<IAccount> accounts = await WPFAuthorizationProvider.Application.GetAccountsAsync().ConfigureAwait(true);
 			//var accounts = await WPFAuthorizationProvider.Application.GetAccountsAsync().ConfigureAwait(true);

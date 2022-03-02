@@ -161,27 +161,38 @@ namespace PresenceBridge
 		{
 			serialLed.setLedColor(color);
 
-			// Alter System Tray Icon color
-			Bitmap bmp = SystemTrayIcon.Icon.ToBitmap();
-			using (Graphics gr = Graphics.FromImage(bmp))
-			{
-				int size = bmp.Width;
-				SolidBrush brush = new SolidBrush(color);
-				gr.FillRectangle(brush, 6*size/32, 2*size/32, 19*size/32, 18*size/32);
-			}
-			IntPtr Hicon = bmp.GetHicon();
-			SystemTrayIcon.Icon = Icon.FromHandle(Hicon);
-
-			// Show Color in Profile Photo
-			if (pictureBoxFoto.Image != null)
-			{
-				var Foto = pictureBoxFoto.Image;
-				using (Graphics gr = Graphics.FromImage(Foto))
+			try {
+				// Alter System Tray Icon color
+				Bitmap bmp = SystemTrayIcon.Icon.ToBitmap();
+				using (Graphics gr = Graphics.FromImage(bmp))
 				{
+					int size = bmp.Width;
 					SolidBrush brush = new SolidBrush(color);
-					gr.FillEllipse(brush, pictureBoxFoto.Width - 40, pictureBoxFoto.Height - 40, 40, 40);
+					gr.FillRectangle(brush, 6 * size / 32, 2 * size / 32, 19 * size / 32, 18 * size / 32);
 				}
-				pictureBoxFoto.Image = Foto;
+				IntPtr Hicon = bmp.GetHicon();
+				SystemTrayIcon.Icon = Icon.FromHandle(Hicon);
+			}
+			catch (Exception ex) {
+				MessageBox.Show("Exception in FormSettings::setPresenceColor, SystemTrayIcon:\n" + ex.Message);
+			}
+
+			try
+			{
+				// Show Color in Profile Photo
+				if (pictureBoxFoto.Image != null)
+				{
+					var Foto = pictureBoxFoto.Image;
+					using (Graphics gr = Graphics.FromImage(Foto))
+					{
+						SolidBrush brush = new SolidBrush(color);
+						gr.FillEllipse(brush, pictureBoxFoto.Width - 40, pictureBoxFoto.Height - 40, 40, 40);
+					}
+					pictureBoxFoto.Image = Foto;
+				}
+			}
+			catch (Exception ex) {
+				MessageBox.Show("Exception in FormSettings::setPresenceColor, ProfileFoto:\n" + ex.Message);
 			}
 		}
 
@@ -207,7 +218,7 @@ namespace PresenceBridge
 		}
 
 
-		private async void btnLogin_Click(object sender, EventArgs e)
+		private void btnLogin_Click(object sender, EventArgs e)
 		{
 			if (btnLogin.Text == "Logout")
 			{
