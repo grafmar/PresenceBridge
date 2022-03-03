@@ -114,8 +114,6 @@ namespace PresenceBridge
 			if (MyDialog.ShowDialog() == DialogResult.OK)
 				(sender as Button).BackColor = MyDialog.Color;
 
-			serialLed.setLedColor(MyDialog.Color);
-
 			copyColorsToSettings();
 		}
 
