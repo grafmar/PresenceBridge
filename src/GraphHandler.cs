@@ -84,7 +84,7 @@ namespace PresenceBridge
                 .WithRedirectUri(Properties.Settings.Default.RedirectUri)
                 .Build();
 
-            //TokenCacheHelper.EnableSerialization(pca.UserTokenCache);
+            TokenCacheHelper.EnableSerialization(pca.UserTokenCache);
 
             return new WPFAuthorizationProvider(pca, scopes);
         }
