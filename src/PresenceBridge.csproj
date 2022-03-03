@@ -241,6 +241,21 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TrayIcon_yellow.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TrayIcon_blue.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TrayIcon_green.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TrayIcon_magenta.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TrayIcon_red.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\System.Text.Json.6.0.2\build\System.Text.Json.targets" Condition="Exists('packages\System.Text.Json.6.0.2\build\System.Text.Json.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -124,7 +124,19 @@
   <data name="icon_mix_UPh_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_mix_UPh_icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="trayicon_512_Olk_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\trayicon_512_Olk_icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="TrayIcon_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TrayIcon_blue.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TrayIcon_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TrayIcon_green.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TrayIcon_magenta" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TrayIcon_magenta.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TrayIcon_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TrayIcon_red.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TrayIcon_yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TrayIcon_yellow.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -83,9 +83,49 @@ namespace PresenceBridge.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon trayicon_512_Olk_icon {
+        internal static System.Drawing.Icon TrayIcon_blue {
             get {
-                object obj = ResourceManager.GetObject("trayicon_512_Olk_icon", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayIcon_blue", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon TrayIcon_green {
+            get {
+                object obj = ResourceManager.GetObject("TrayIcon_green", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon TrayIcon_magenta {
+            get {
+                object obj = ResourceManager.GetObject("TrayIcon_magenta", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon TrayIcon_red {
+            get {
+                object obj = ResourceManager.GetObject("TrayIcon_red", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon TrayIcon_yellow {
+            get {
+                object obj = ResourceManager.GetObject("TrayIcon_yellow", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

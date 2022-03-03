@@ -24,6 +24,17 @@ namespace PresenceBridge
 		private static GraphHandler graphHandler = new GraphHandler();
 		private static bool executingTimer = false;
 
+		private const string presenceAvailable = "Available";
+		private const string presenceAvailableIdle = "AvailableIdle";
+		private const string presenceBusy = "Busy";
+		private const string presenceBusyIdle = "BusyIdle";
+		private const string presenceDoNotDisturb = "DoNotDisturb";
+		private const string presenceAway = "Away";
+		private const string presenceBeRightBack = "BeRightBack";
+		private const string presenceOffline = "Offline";
+		private const string presencePresenceUnknown = "PresenceUnknown";
+
+
 		public FormSettings()
 		{
 			InitializeComponent();
@@ -34,7 +45,7 @@ namespace PresenceBridge
 
 			// Set application icon and system tray icon
 			this.Icon = Properties.Resources.icon_mix_UPh_icon;
-			this.SystemTrayIcon.Icon = Properties.Resources.trayicon_512_Olk_icon;
+			this.SystemTrayIcon.Icon = Properties.Resources.TrayIcon_blue;
 
 			// Change the Text property to the name of your application
 			this.SystemTrayIcon.Text = "PresenceBridge";
@@ -70,7 +81,7 @@ namespace PresenceBridge
 
 		private void ContextMenuExit(object sender, EventArgs e)
 		{
-			setPresenceColor(System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorOffline));
+			applyPresenceFromString(presenceOffline);
 			serialLed.Close();
 			this.SystemTrayIcon.Visible = false;
 			System.Windows.Forms.Application.Exit();
@@ -105,13 +116,13 @@ namespace PresenceBridge
 
 			serialLed.setLedColor(MyDialog.Color);
 
-			saveSettings();
+			copyColorsToSettings();
 		}
 
 		private void trackBarBrightness_Scroll(object sender, EventArgs e)
 		{
 			labelBrightness.Text = "Brightness " + trackBarBrightness.Value + "%";
-			saveSettings();
+			copyColorsToSettings();
 		}
 
 		private int Clamp(int value, int min, int max)
@@ -121,25 +132,25 @@ namespace PresenceBridge
 
 		private void applySettings()
 		{
-			btnAvailable.BackColor		= System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorAvailable);
-			btnBusy.BackColor			= System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorBusy);
-			btnAway.BackColor			= System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorAway);
-			btnDoNotDisturb.BackColor	= System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorDoNotDisturb);
-			btnOffline.BackColor		= System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorOffline);
-			trackBarBrightness.Value	= Clamp(Properties.Settings.Default.Brightness, 0, 100);
-			labelBrightness.Text		= "Brightness " + trackBarBrightness.Value + "%";
-			comboBoxSerialPort.Text		= Properties.Settings.Default.SerialPort;
+			btnAvailable.BackColor = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorAvailable);
+			btnBusy.BackColor = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorBusy);
+			btnAway.BackColor = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorAway);
+			btnDoNotDisturb.BackColor = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorDoNotDisturb);
+			btnOffline.BackColor = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorOffline);
+			trackBarBrightness.Value = Clamp(Properties.Settings.Default.Brightness, 0, 100);
+			labelBrightness.Text = "Brightness " + trackBarBrightness.Value + "%";
+			comboBoxSerialPort.Text = Properties.Settings.Default.SerialPort;
 		}
 
-		private void saveSettings()
+		private void copyColorsToSettings()
 		{
-			Properties.Settings.Default.ColorAvailable		= System.Drawing.ColorTranslator.ToHtml(btnAvailable.BackColor);
-			Properties.Settings.Default.ColorBusy			= System.Drawing.ColorTranslator.ToHtml(btnBusy.BackColor);
-			Properties.Settings.Default.ColorAway			= System.Drawing.ColorTranslator.ToHtml(btnAway.BackColor);
-			Properties.Settings.Default.ColorDoNotDisturb	= System.Drawing.ColorTranslator.ToHtml(btnDoNotDisturb.BackColor);
-			Properties.Settings.Default.ColorOffline		= System.Drawing.ColorTranslator.ToHtml(btnOffline.BackColor);
-			Properties.Settings.Default.Brightness			= trackBarBrightness.Value;
-			Properties.Settings.Default.SerialPort			= comboBoxSerialPort.Text;
+			Properties.Settings.Default.ColorAvailable = System.Drawing.ColorTranslator.ToHtml(btnAvailable.BackColor);
+			Properties.Settings.Default.ColorBusy = System.Drawing.ColorTranslator.ToHtml(btnBusy.BackColor);
+			Properties.Settings.Default.ColorAway = System.Drawing.ColorTranslator.ToHtml(btnAway.BackColor);
+			Properties.Settings.Default.ColorDoNotDisturb = System.Drawing.ColorTranslator.ToHtml(btnDoNotDisturb.BackColor);
+			Properties.Settings.Default.ColorOffline = System.Drawing.ColorTranslator.ToHtml(btnOffline.BackColor);
+			Properties.Settings.Default.Brightness = trackBarBrightness.Value;
+			Properties.Settings.Default.SerialPort = comboBoxSerialPort.Text;
 		}
 
 		private void getSerialPorts()
@@ -157,21 +168,17 @@ namespace PresenceBridge
 			}
 		}
 
-		private void setPresenceColor(Color color)
+		private void applyPresence(Presence presence)
 		{
-			serialLed.setLedColor(color);
+			applyPresenceFromString(presence.Availability);
+		}
+
+		private void applyPresenceFromString(String presenceString)
+		{
+			serialLed.setLedColor(getLedColorFromPresence(presenceString));
 
 			try {
-				// Alter System Tray Icon color
-				Bitmap bmp = SystemTrayIcon.Icon.ToBitmap();
-				using (Graphics gr = Graphics.FromImage(bmp))
-				{
-					int size = bmp.Width;
-					SolidBrush brush = new SolidBrush(color);
-					gr.FillRectangle(brush, 6 * size / 32, 2 * size / 32, 19 * size / 32, 18 * size / 32);
-				}
-				IntPtr Hicon = bmp.GetHicon();
-				SystemTrayIcon.Icon = Icon.FromHandle(Hicon);
+				SystemTrayIcon.Icon = getTrayIconFromPresenceString(presenceString);
 			}
 			catch (Exception ex) {
 				MessageBox.Show("Exception in FormSettings::setPresenceColor, SystemTrayIcon:\n" + ex.Message);
@@ -180,6 +187,7 @@ namespace PresenceBridge
 			try
 			{
 				// Show Color in Profile Photo
+				Color color = getSystemColorFromPresence(presenceString);
 				if (pictureBoxFoto.Image != null)
 				{
 					var Foto = pictureBoxFoto.Image;
@@ -198,7 +206,7 @@ namespace PresenceBridge
 
 		private void comboBoxSerialPort_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			saveSettings();
+			copyColorsToSettings();
 		}
 
 		private void comboBoxSerialPort_Click(object sender, EventArgs e)
@@ -225,7 +233,7 @@ namespace PresenceBridge
 				graphHandler.Logout();
 				//await SetColor("Off").ConfigureAwait(true);
 				pictureBoxFoto.Visible = false;
-				setPresenceColor(System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorOffline));
+				applyPresenceFromString(presenceOffline);
 				timerPeriodic.Stop();
 
 				//doLogout();
@@ -259,7 +267,7 @@ namespace PresenceBridge
 			graphHandler.Login();
 
 			setPhoto(await graphHandler.GetPhoto());
-			setPresenceColor(getColorFromPresence((await graphHandler.GetPresence())));
+			applyPresence(await graphHandler.GetPresence());
 			timerPeriodic.Start();
 
 			// doLogin();
@@ -461,33 +469,78 @@ namespace PresenceBridge
 			//}
 		}
 
-		private Color getColorFromPresence(Presence presence)
+		private Icon getTrayIconFromPresenceString(string presenceString)
+		{
+			switch (presenceString)
+			{
+				case presenceAvailable:
+				case presenceAvailableIdle:
+					return Properties.Resources.TrayIcon_green;
+				case presenceBusy:
+				case presenceBusyIdle:
+					return Properties.Resources.TrayIcon_red;
+				case presenceDoNotDisturb:
+					return Properties.Resources.TrayIcon_magenta;
+				case presenceAway:
+				case presenceBeRightBack:
+					return Properties.Resources.TrayIcon_yellow;
+				case presenceOffline:
+				case presencePresenceUnknown:
+				default:
+					return Properties.Resources.TrayIcon_blue;
+			}
+
+		}
+
+		private Color getLedColorFromPresence(string presenceString)
 		{
 			Color retVal= Color.Black;
-			switch (presence.Availability)
+			switch (presenceString)
 			{
-				case "Available":
-				case "AvailableIdle":
+				case presenceAvailable:
+				case presenceAvailableIdle:
 					retVal = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorAvailable);
 					break;
-				case "Busy":
-				case "BusyIdle":
+				case presenceBusy:
+				case presenceBusyIdle:
 					retVal = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorBusy);
 					break;
-				case "DoNotDisturb":
+				case presenceDoNotDisturb:
 					retVal = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorDoNotDisturb);
 					break;
-				case "Away":
-				case "BeRightBack":
+				case presenceAway:
+				case presenceBeRightBack:
 					retVal = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorAway);
 					break;
-				case "Offline":
-				case "PresenceUnknown":
+				case presenceOffline:
+				case presencePresenceUnknown:
 				default:
 					retVal = System.Drawing.ColorTranslator.FromHtml(Properties.Settings.Default.ColorOffline);
 					break;
 			}
 			return retVal;
+		}
+
+		private Color getSystemColorFromPresence(string presenceString)
+		{
+			switch (presenceString)
+			{
+				case presenceAvailable:
+				case presenceAvailableIdle:
+					return Color.FromArgb(0, 255, 0);
+				case presenceBusy:
+				case presenceBusyIdle:
+					return Color.FromArgb(255, 0, 0);
+				case presenceDoNotDisturb:
+					return Color.FromArgb(255, 0, 255);
+				case presenceAway:
+				case presenceBeRightBack:
+					return Color.FromArgb(255, 255, 0);
+				case presenceOffline:
+				case presencePresenceUnknown:
+				default:
+					return Color.FromArgb(0,0, 150);
+			}
 		}
 
 		public Bitmap ClipToCircle(Bitmap bm)
@@ -520,7 +573,7 @@ namespace PresenceBridge
 			if (!executingTimer) // only enter if the last one is finished
 			{
 				executingTimer = true;
-				setPresenceColor(getColorFromPresence((await graphHandler.GetPresence())));
+				applyPresence(await graphHandler.GetPresence());
 				executingTimer = false;
 			}
 		}
