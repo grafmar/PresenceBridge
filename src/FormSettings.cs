@@ -77,9 +77,12 @@ namespace PresenceBridge
 			}
 
 			doLogin();
+
+			// startup only in SystemTray
+			this.WindowState = FormWindowState.Minimized;
+			this.Close();
 		}
 
-		
 		private void ContextMenuSetPresence(object sender, EventArgs e, System.Windows.Forms.RadioButton radioButtonToSet)
 		{
 			radioButtonToSet.Checked = true;
@@ -406,5 +409,6 @@ namespace PresenceBridge
 			else if (radioButtonDoNotDisturb.Checked) applyPresenceFromString(presenceDoNotDisturb);
 			else if (radioButtonOffline.Checked) applyPresenceFromString(presenceOffline);
 		}
+
 	}
 }
