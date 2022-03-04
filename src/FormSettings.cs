@@ -584,7 +584,7 @@ namespace PresenceBridge
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("Exception in FormSettings::setPresenceColor, SystemTrayIcon:\n" + ex.Message);
+					MessageBox.Show("Exception in FormSettings::timerPeriodic_Tick, applyPresence:\n" + ex.Message);
 				}
 			}
 			else if (radioButtonAvailable.Checked) applyPresenceFromString(presenceAvailable);
