@@ -3,6 +3,7 @@ using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 // using Microsoft.Extensions.Options;
 
 namespace PresenceBridge
@@ -18,21 +19,21 @@ namespace PresenceBridge
             _graphServiceClient = graphservice.GetAuthenticatedGraphClient();
         }
 
-        public void Logout()
+        public async void Logout()
         {
-			//System.Collections.Generic.IEnumerable<IAccount> accounts = await WPFAuthorizationProvider.Application.GetAccountsAsync().ConfigureAwait(true);
-			//var accounts = await WPFAuthorizationProvider.Application.GetAccountsAsync().ConfigureAwait(true);
-			//var accounts = await WPFAuthorizationProvider.Application.GetAccountsAsync();
-   //         if (accounts.Any())
-   //         {
-   //             try
-   //             {
-   //                 await WPFAuthorizationProvider.Application.RemoveAsync(accounts.FirstOrDefault()).ConfigureAwait(true);
-   //             }
-   //             catch (MsalException)
-   //             {
-   //             }
-   //         }
+            try
+            {
+                var accounts = await WPFAuthorizationProvider.Application.GetAccountsAsync().ConfigureAwait(true);
+                
+                foreach (var account in accounts)
+                {
+                    await WPFAuthorizationProvider.Application.RemoveAsync(account).ConfigureAwait(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception in GraphHandler::Logout:\n" + ex.Message);
+            }
         }
 
         public async Task<System.IO.Stream> GetPhoto()
