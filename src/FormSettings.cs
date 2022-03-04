@@ -22,7 +22,6 @@ namespace PresenceBridge
 		private static bool serialPortConfiguredAvailable = false;
 		private static SerialLed serialLed = new SerialLed();
 		private static GraphHandler graphHandler = new GraphHandler();
-		private static bool executingTimer = false;
 
 		private const string presenceAvailable = "Available";
 		private const string presenceAvailableIdle = "AvailableIdle";
@@ -53,9 +52,17 @@ namespace PresenceBridge
 
 			// Modify the right-click menu of your system tray icon here
 			ContextMenu menu = new ContextMenu();
+			menu.MenuItems.Add("Available", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonAvailable));
+			menu.MenuItems.Add("Busy", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonBusy));
+			menu.MenuItems.Add("Away", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonAway));
+			menu.MenuItems.Add("DoNotDisturb", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonDoNotDisturb));
+			menu.MenuItems.Add("Offline", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonOffline));
+			menu.MenuItems.Add("SyncToTeams", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonSyncToTeams));
+			menu.MenuItems.Add("-");
 			menu.MenuItems.Add("Settings", ContextMenuSettings);
 			menu.MenuItems.Add("Exit", ContextMenuExit);
 			this.SystemTrayIcon.ContextMenu = menu;
+			this.ContextMenu = menu;
 
 			this.Resize += WindowResize;
 			this.FormClosing += WindowClosing;
@@ -70,6 +77,12 @@ namespace PresenceBridge
 			}
 
 			doLogin();
+		}
+
+		
+		private void ContextMenuSetPresence(object sender, EventArgs e, System.Windows.Forms.RadioButton radioButtonToSet)
+		{
+			radioButtonToSet.Checked = true;
 		}
 
 		private void ContextMenuSettings(object sender, EventArgs e)
@@ -555,11 +568,6 @@ namespace PresenceBridge
 			bt.MakeTransparent(Color.Magenta);
 			return bt;
 		}
-		            
-		private void SystemTrayIcon_MouseClick(object sender, MouseEventArgs e)
-		{
-			ContextMenuSettings(sender, e);
-		}
 
 		private void SystemTrayIcon_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
@@ -568,12 +576,22 @@ namespace PresenceBridge
 
 		private async void timerPeriodic_Tick(object sender, EventArgs e)
 		{
-			if (!executingTimer) // only enter if the last one is finished
+			if (radioButtonSyncToTeams.Checked)
 			{
-				executingTimer = true;
-				applyPresence(await graphHandler.GetPresence());
-				executingTimer = false;
+				try
+				{
+					applyPresence(await graphHandler.GetPresence());
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show("Exception in FormSettings::setPresenceColor, SystemTrayIcon:\n" + ex.Message);
+				}
 			}
+			else if (radioButtonAvailable.Checked) applyPresenceFromString(presenceAvailable);
+			else if (radioButtonBusy.Checked) applyPresenceFromString(presenceBusy);
+			else if (radioButtonAway.Checked) applyPresenceFromString(presenceAway);
+			else if (radioButtonDoNotDisturb.Checked) applyPresenceFromString(presenceDoNotDisturb);
+			else if (radioButtonOffline.Checked) applyPresenceFromString(presenceOffline);
 		}
 	}
 }
