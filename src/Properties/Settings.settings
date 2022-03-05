@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="ClientId" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">5fdf08e2-7fcc-4db2-81dd-eeb9b139a2c2</Value>
+      <Value Profile="(Default)">3bd2647e-821e-48dd-a4b3-158e87fd7945</Value>
     </Setting>
     <Setting Name="ColorAvailable" Type="System.String" Scope="User">
       <Value Profile="(Default)">#00FF00</Value>

@@ -25,7 +25,7 @@ namespace PresenceBridge.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5fdf08e2-7fcc-4db2-81dd-eeb9b139a2c2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3bd2647e-821e-48dd-a4b3-158e87fd7945")]
         public string ClientId {
             get {
                 return ((string)(this["ClientId"]));
