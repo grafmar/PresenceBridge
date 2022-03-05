@@ -60,6 +60,7 @@ namespace PresenceBridge
 			menu.MenuItems.Add("SyncToTeams", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonSyncToTeams));
 			menu.MenuItems.Add("-");
 			menu.MenuItems.Add("Settings", ContextMenuSettings);
+			menu.MenuItems.Add("About", ContextMenuAbout);
 			menu.MenuItems.Add("Exit", ContextMenuExit);
 			this.SystemTrayIcon.ContextMenu = menu;
 			this.ContextMenu = menu;
@@ -86,6 +87,12 @@ namespace PresenceBridge
 		private void ContextMenuSetPresence(object sender, EventArgs e, System.Windows.Forms.RadioButton radioButtonToSet)
 		{
 			radioButtonToSet.Checked = true;
+		}
+		
+		private void ContextMenuAbout(object sender, EventArgs e)
+		{
+			AboutWindow aboutWindow = new AboutWindow();
+			aboutWindow.Show();
 		}
 
 		private void ContextMenuSettings(object sender, EventArgs e)

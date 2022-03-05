@@ -1,7 +1,8 @@
 # PresenceBridge
-Controlls Light through serial port and synchronizes with Teams Status
-
-> ***This application is still in work...***
+Controlls LED-Light through serial port and synchronizes with Teams Status.
+The serial protocol is very simple and a Light such as the
+[LyncDisplayLight](https://github.com/grafmar/LyncDisplayLight) can easily
+be build up.
 
 ## Connecting HW
 The HW it is designed for is the [LyncDisplayLight](https://github.com/grafmar/LyncDisplayLight).
@@ -10,10 +11,11 @@ connection.
 
 The serial connection is configrued with 115200baud, 1 stop-bit, no parity. The commands used to
 control the light are:
-```
-rgb:255,255,0\n
-callerid:John Doe\n
-```
+
+`rgb:255,255,0\n`
+
+`callerid:John Doe\n`
+
 
 ## Configuration
 <img src="Documentation/PresenceBridge_Configuration.png" alt="Configuration of PresenceBridge" width="30%"/> 
@@ -37,3 +39,9 @@ to 100%.
 ### Teams Connection
 To connect to your Teams account click on `Login`. This will open a browser window to log in. To
 logout click on `Logout`
+
+## Author
+[Marco Graf](https://github.com/grafmar)
+
+## Credits / Attribution
+* Partially used code from [Isaac Levin](https://github.com/isaacrlevin); [presencelight](https://github.com/isaacrlevin/presencelight)
