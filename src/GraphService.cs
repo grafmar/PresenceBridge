@@ -8,35 +8,37 @@ using System.Linq;
 
 namespace PresenceBridge
 {
-    public class GraphService
-    {
+	public class GraphService
+	{
+		private static log4net.ILog log;
 
-        public GraphService()
-        {
-        }
+		public GraphService(log4net.ILog logger)
+		{
+			log = logger;
+		}
 
-        public GraphServiceClient GetAuthenticatedGraphClient()
-        {
-            var authenticationProvider = CreateAuthorizationProvider();
-            var _graphServiceClient = new GraphServiceClient(authenticationProvider);
-            return _graphServiceClient;
-        }
+		public GraphServiceClient GetAuthenticatedGraphClient()
+		{
+			var authenticationProvider = CreateAuthorizationProvider();
+			var _graphServiceClient = new GraphServiceClient(authenticationProvider);
+			return _graphServiceClient;
+		}
 
-        private IAuthenticationProvider CreateAuthorizationProvider()
-        {
-            List<string> scopes = new List<string>
-            {
-                "https://graph.microsoft.com/.default"
-            };
+		private IAuthenticationProvider CreateAuthorizationProvider()
+		{
+			List<string> scopes = new List<string>
+			{
+				"https://graph.microsoft.com/.default"
+			};
 
-            var pca = PublicClientApplicationBuilder.Create(Properties.Settings.Default.ClientId)
-                //.WithAuthority($"{aadSettings.Instance}common/")
-                .WithRedirectUri(Properties.Settings.Default.RedirectUri)
-                .Build();
+			var pca = PublicClientApplicationBuilder.Create(Properties.Settings.Default.ClientId)
+				//.WithAuthority($"{aadSettings.Instance}common/")
+				.WithRedirectUri(Properties.Settings.Default.RedirectUri)
+				.Build();
 
-            TokenCacheHelper.EnableSerialization(pca.UserTokenCache);
+			TokenCacheHelper.EnableSerialization(pca.UserTokenCache);
 
-            return new WPFAuthorizationProvider(pca, scopes);
-        }
-    }
+			return new WPFAuthorizationProvider(pca, scopes);
+		}
+	}
 }

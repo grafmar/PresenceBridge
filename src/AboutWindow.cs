@@ -11,15 +11,25 @@ namespace PresenceBridge
 {
 	partial class AboutWindow : Form
 	{
-		public AboutWindow()
+		private static log4net.ILog log;
+
+		public AboutWindow(log4net.ILog logger)
 		{
-			InitializeComponent();
-			this.Text = String.Format("About {0}", AssemblyTitle);
-			this.labelProductName.Text = AssemblyProduct;
-			this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
-			this.labelCopyright.Text = AssemblyCopyright;
-			this.labelCompanyName.Text = AssemblyCompany;
-			this.textBoxDescription.Text = AssemblyDescription;
+			log = logger;
+			try
+			{
+				InitializeComponent();
+				this.Text = String.Format("About {0}", AssemblyTitle);
+				this.labelProductName.Text = AssemblyProduct;
+				this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
+				this.labelCopyright.Text = AssemblyCopyright;
+				this.labelCompanyName.Text = AssemblyCompany;
+				this.textBoxDescription.Text = AssemblyDescription;
+			}
+			catch (Exception ex)
+			{
+				log.Error(ex.Message);
+			}
 		}
 
 		#region Assembly Attribute Accessors

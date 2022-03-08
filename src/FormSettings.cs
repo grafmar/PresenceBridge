@@ -20,9 +20,11 @@ namespace PresenceBridge
 {
 	public partial class FormSettings : Form
 	{
+		private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 		private static bool serialPortConfiguredAvailable = false;
-		private static SerialLed serialLed = new SerialLed();
-		private static GraphHandler graphHandler = new GraphHandler();
+		private static SerialLed serialLed = new SerialLed(log);
+		private static GraphHandler graphHandler = new GraphHandler(log);
 
 		private const string presenceAvailable = "Available";
 		private const string presenceAvailableIdle = "AvailableIdle";
@@ -37,6 +39,8 @@ namespace PresenceBridge
 
 		public FormSettings()
 		{
+			log.Info("Starting up...");
+
 			InitializeComponent();
 
 			// initialize for SystemTrayApp
@@ -53,12 +57,12 @@ namespace PresenceBridge
 
 			// Modify the right-click menu of your system tray icon here
 			ContextMenu menu = new ContextMenu();
-			menu.MenuItems.Add("Available", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonAvailable));
-			menu.MenuItems.Add("Busy", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonBusy));
-			menu.MenuItems.Add("Away", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonAway));
-			menu.MenuItems.Add("DoNotDisturb", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonDoNotDisturb));
-			menu.MenuItems.Add("Offline", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonOffline));
-			menu.MenuItems.Add("SyncToTeams", (sender, e) => ContextMenuSetPresence(sender,e,radioButtonSyncToTeams));
+			menu.MenuItems.Add("Available", (sender, e) => ContextMenuSetPresence(sender, e, radioButtonAvailable));
+			menu.MenuItems.Add("Busy", (sender, e) => ContextMenuSetPresence(sender, e, radioButtonBusy));
+			menu.MenuItems.Add("Away", (sender, e) => ContextMenuSetPresence(sender, e, radioButtonAway));
+			menu.MenuItems.Add("DoNotDisturb", (sender, e) => ContextMenuSetPresence(sender, e, radioButtonDoNotDisturb));
+			menu.MenuItems.Add("Offline", (sender, e) => ContextMenuSetPresence(sender, e, radioButtonOffline));
+			menu.MenuItems.Add("SyncToTeams", (sender, e) => ContextMenuSetPresence(sender, e, radioButtonSyncToTeams));
 			menu.MenuItems.Add("-");
 			menu.MenuItems.Add("Settings", ContextMenuSettings);
 			menu.MenuItems.Add("About", ContextMenuAbout);
@@ -75,6 +79,7 @@ namespace PresenceBridge
 
 			if (!serialPortConfiguredAvailable)
 			{
+				log.Warn("Configured serial port \"" + Properties.Settings.Default.SerialPort + "\" is not available");
 				MessageBox.Show("Configured serial port \"" + Properties.Settings.Default.SerialPort + "\" is not available! Try to configure correct serail port.");
 			}
 
@@ -83,16 +88,17 @@ namespace PresenceBridge
 			// startup only in SystemTray
 			this.WindowState = FormWindowState.Minimized;
 			this.Close();
+			log.Info("Startup done");
 		}
 
 		private void ContextMenuSetPresence(object sender, EventArgs e, System.Windows.Forms.RadioButton radioButtonToSet)
 		{
 			radioButtonToSet.Checked = true;
 		}
-		
+
 		private void ContextMenuAbout(object sender, EventArgs e)
 		{
-			AboutWindow aboutWindow = new AboutWindow();
+			AboutWindow aboutWindow = new AboutWindow(log);
 			aboutWindow.Show();
 		}
 
@@ -105,6 +111,7 @@ namespace PresenceBridge
 
 		private void ContextMenuExit(object sender, EventArgs e)
 		{
+			log.Info("Exitting application");
 			applyPresenceFromString(presenceOffline);
 			serialLed.Close();
 			this.SystemTrayIcon.Visible = false;
@@ -209,11 +216,13 @@ namespace PresenceBridge
 		{
 			serialLed.setLedColor(getLedColorFromPresence(presenceString));
 
-			try {
+			try
+			{
 				SystemTrayIcon.Icon = getTrayIconFromPresenceString(presenceString);
 			}
-			catch (Exception ex) {
-				MessageBox.Show("Exception in FormSettings::setPresenceColor, SystemTrayIcon:\n" + ex.Message);
+			catch (Exception ex)
+			{
+				log.Error("SystemTrayIcon: " + ex.Message);
 			}
 
 			try
@@ -231,8 +240,9 @@ namespace PresenceBridge
 					pictureBoxFoto.Image = Foto;
 				}
 			}
-			catch (Exception ex) {
-				MessageBox.Show("Exception in FormSettings::setPresenceColor, ProfileFoto:\n" + ex.Message);
+			catch (Exception ex)
+			{
+				log.Error("ProfileFoto: " + ex.Message);
 			}
 		}
 
@@ -298,16 +308,17 @@ namespace PresenceBridge
 		{
 			graphHandler.Login();
 
-			try { 
+			try
+			{
 				setPhoto(await graphHandler.GetPhoto());
 				applyPresence(await graphHandler.GetPresence());
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Exception in FormSettings::doLogin:\n" + ex.Message);
+				log.Error(ex.Message);
 			}
 
-			
+
 			timerPeriodic.Start();
 
 			// doLogin();
@@ -339,7 +350,7 @@ namespace PresenceBridge
 
 		private Color getLedColorFromPresence(string presenceString)
 		{
-			Color retVal= Color.Black;
+			Color retVal = Color.Black;
 			switch (presenceString)
 			{
 				case presenceAvailable:
@@ -384,7 +395,7 @@ namespace PresenceBridge
 				case presenceOffline:
 				case presencePresenceUnknown:
 				default:
-					return Color.FromArgb(0,0, 150);
+					return Color.FromArgb(0, 0, 150);
 			}
 		}
 
@@ -418,7 +429,7 @@ namespace PresenceBridge
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("Exception in FormSettings::timerPeriodic_Tick, applyPresence:\n" + ex.Message);
+					log.Error("applyPresence:" + ex.Message);
 				}
 			}
 			else if (radioButtonAvailable.Checked) applyPresenceFromString(presenceAvailable);

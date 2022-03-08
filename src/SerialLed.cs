@@ -12,13 +12,15 @@ namespace PresenceBridge
 	class SerialLed
 	{
 		SerialPort _serialPort = new SerialPort();
+		private static log4net.ILog log;
 
-		public SerialLed()
+		public SerialLed(log4net.ILog logger)
 		{
-			_serialPort.BaudRate	= 115200;
-			_serialPort.Parity		= Parity.None;
-			_serialPort.DataBits	= 8;
-			_serialPort.StopBits	= StopBits.One;
+			log = logger;
+			_serialPort.BaudRate = 115200;
+			_serialPort.Parity = Parity.None;
+			_serialPort.DataBits = 8;
+			_serialPort.StopBits = StopBits.One;
 		}
 
 		private void openPort()
@@ -36,7 +38,8 @@ namespace PresenceBridge
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Error closing serial port :: " + ex.Message, "Error!");
+				log.Error("Error closing serial port :" + ex.Message);
+				MessageBox.Show("Error closing serial port :" + ex.Message, "Error!");
 			}
 
 			try
@@ -46,9 +49,9 @@ namespace PresenceBridge
 					_serialPort.Open(); // Open serial port
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				//MessageBox.Show("Error opening serial port :: " + ex.Message, "Error!");
+				log.Error("Error opening serial port :" + ex.Message);
 			}
 		}
 
@@ -61,8 +64,9 @@ namespace PresenceBridge
 					_serialPort.Close();
 				}
 			}
-			catch (Exception ex) {
-				MessageBox.Show("Exception in SerialLed::Close():\n" + ex.Message);
+			catch (Exception ex)
+			{
+				log.Error(ex.Message);
 			}
 		}
 
@@ -87,7 +91,7 @@ namespace PresenceBridge
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("Could not send message on open serial port :: " + ex.Message, "Error!");
+					log.Error("Could not send message on open serial port :" + ex.Message);
 				}
 			}
 		}

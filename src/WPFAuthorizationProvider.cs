@@ -9,48 +9,48 @@ using System.Net.Http.Headers;
 
 namespace PresenceBridge
 {
-    public class WPFAuthorizationProvider : MSGraph.IAuthenticationProvider
-    {
-        public static IPublicClientApplication Application;
-        private readonly List<string> _scopes;
+	public class WPFAuthorizationProvider : MSGraph.IAuthenticationProvider
+	{
+		public static IPublicClientApplication Application;
+		private readonly List<string> _scopes;
 
-        public WPFAuthorizationProvider(IPublicClientApplication application, List<string> scopes)
-        {
-            Application = application;
-            _scopes = scopes;
-        }
+		public WPFAuthorizationProvider(IPublicClientApplication application, List<string> scopes)
+		{
+			Application = application;
+			_scopes = scopes;
+		}
 
-        public async Task AuthenticateRequestAsync(HttpRequestMessage request)
-        {
-            AuthenticationResult authResult = null;
+		public async Task AuthenticateRequestAsync(HttpRequestMessage request)
+		{
+			AuthenticationResult authResult = null;
 
-            var accounts = await Application.GetAccountsAsync().ConfigureAwait(true);
-            var firstAccount = accounts.FirstOrDefault();
+			var accounts = await Application.GetAccountsAsync().ConfigureAwait(true);
+			var firstAccount = accounts.FirstOrDefault();
 
-            try
-            {
-                authResult = await Application.AcquireTokenSilent(_scopes, accounts.FirstOrDefault())
-                .ExecuteAsync().ConfigureAwait(true);
+			try
+			{
+				authResult = await Application.AcquireTokenSilent(_scopes, accounts.FirstOrDefault())
+				.ExecuteAsync().ConfigureAwait(true);
 
-            }
-            catch (MsalUiRequiredException)
-            {
-                try
-                {
-                    authResult = await Application.AcquireTokenInteractive(_scopes)
-                       .WithUseEmbeddedWebView(false)
-                       .ExecuteAsync().ConfigureAwait(true);
-                }
-                catch
-                {
+			}
+			catch (MsalUiRequiredException)
+			{
+				try
+				{
+					authResult = await Application.AcquireTokenInteractive(_scopes)
+					   .WithUseEmbeddedWebView(false)
+					   .ExecuteAsync().ConfigureAwait(true);
+				}
+				catch
+				{
 
-                }
-            }
+				}
+			}
 
-            if (authResult != null)
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("bearer", authResult.AccessToken);
-            }
-        }
-    }
+			if (authResult != null)
+			{
+				request.Headers.Authorization = new AuthenticationHeaderValue("bearer", authResult.AccessToken);
+			}
+		}
+	}
 }
