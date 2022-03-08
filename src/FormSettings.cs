@@ -66,6 +66,7 @@ namespace PresenceBridge
 			menu.MenuItems.Add("-");
 			menu.MenuItems.Add("Settings", ContextMenuSettings);
 			menu.MenuItems.Add("About", ContextMenuAbout);
+			menu.MenuItems.Add("-");
 			menu.MenuItems.Add("Exit", ContextMenuExit);
 			this.SystemTrayIcon.ContextMenu = menu;
 			this.ContextMenu = menu;
