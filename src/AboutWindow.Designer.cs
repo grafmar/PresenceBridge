@@ -33,9 +33,9 @@ namespace PresenceBridge
 			this.labelProductName = new System.Windows.Forms.Label();
 			this.labelVersion = new System.Windows.Forms.Label();
 			this.labelCopyright = new System.Windows.Forms.Label();
-			this.labelCompanyName = new System.Windows.Forms.Label();
-			this.textBoxDescription = new System.Windows.Forms.TextBox();
 			this.okButton = new System.Windows.Forms.Button();
+			this.linkLabelDescription = new System.Windows.Forms.LinkLabel();
+			this.labelCompanyName = new System.Windows.Forms.Label();
 			this.tableLayoutPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
 			this.SuspendLayout();
@@ -50,8 +50,8 @@ namespace PresenceBridge
 			this.tableLayoutPanel.Controls.Add(this.labelVersion, 1, 1);
 			this.tableLayoutPanel.Controls.Add(this.labelCopyright, 1, 2);
 			this.tableLayoutPanel.Controls.Add(this.labelCompanyName, 1, 3);
-			this.tableLayoutPanel.Controls.Add(this.textBoxDescription, 1, 4);
 			this.tableLayoutPanel.Controls.Add(this.okButton, 1, 5);
+			this.tableLayoutPanel.Controls.Add(this.linkLabelDescription, 1, 4);
 			this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel.Location = new System.Drawing.Point(9, 9);
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -62,17 +62,18 @@ namespace PresenceBridge
 			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
 			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel.Size = new System.Drawing.Size(417, 265);
 			this.tableLayoutPanel.TabIndex = 0;
 			// 
 			// logoPictureBox
 			// 
-			this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Top;
 			this.logoPictureBox.Image = global::PresenceBridge.Properties.Resources.Icon_mix;
 			this.logoPictureBox.Location = new System.Drawing.Point(3, 3);
 			this.logoPictureBox.Name = "logoPictureBox";
 			this.tableLayoutPanel.SetRowSpan(this.logoPictureBox, 6);
-			this.logoPictureBox.Size = new System.Drawing.Size(131, 259);
+			this.logoPictureBox.Size = new System.Drawing.Size(131, 131);
 			this.logoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.logoPictureBox.TabIndex = 12;
 			this.logoPictureBox.TabStop = false;
@@ -113,6 +114,31 @@ namespace PresenceBridge
 			this.labelCopyright.Text = "Copyright";
 			this.labelCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// okButton
+			// 
+			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.okButton.Location = new System.Drawing.Point(339, 239);
+			this.okButton.Name = "okButton";
+			this.okButton.Size = new System.Drawing.Size(75, 23);
+			this.okButton.TabIndex = 24;
+			this.okButton.Text = "&OK";
+			this.okButton.Click += new System.EventHandler(this.okButton_Click);
+			// 
+			// linkLabelDescription
+			// 
+			this.linkLabelDescription.AutoSize = true;
+			this.linkLabelDescription.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
+			this.linkLabelDescription.Location = new System.Drawing.Point(143, 104);
+			this.linkLabelDescription.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+			this.linkLabelDescription.MaximumSize = new System.Drawing.Size(271, 126);
+			this.linkLabelDescription.MinimumSize = new System.Drawing.Size(271, 126);
+			this.linkLabelDescription.Name = "linkLabelDescription";
+			this.linkLabelDescription.Size = new System.Drawing.Size(271, 126);
+			this.linkLabelDescription.TabIndex = 1;
+			this.linkLabelDescription.Text = "linkLabel1";
+			this.linkLabelDescription.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+			// 
 			// labelCompanyName
 			// 
 			this.labelCompanyName.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -124,31 +150,6 @@ namespace PresenceBridge
 			this.labelCompanyName.TabIndex = 22;
 			this.labelCompanyName.Text = "Company Name";
 			this.labelCompanyName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// textBoxDescription
-			// 
-			this.textBoxDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textBoxDescription.Location = new System.Drawing.Point(143, 107);
-			this.textBoxDescription.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
-			this.textBoxDescription.Multiline = true;
-			this.textBoxDescription.Name = "textBoxDescription";
-			this.textBoxDescription.ReadOnly = true;
-			this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxDescription.Size = new System.Drawing.Size(271, 126);
-			this.textBoxDescription.TabIndex = 23;
-			this.textBoxDescription.TabStop = false;
-			this.textBoxDescription.Text = "Description";
-			// 
-			// okButton
-			// 
-			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.okButton.Location = new System.Drawing.Point(339, 239);
-			this.okButton.Name = "okButton";
-			this.okButton.Size = new System.Drawing.Size(75, 23);
-			this.okButton.TabIndex = 24;
-			this.okButton.Text = "&OK";
-			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
 			// AboutWindow
 			// 
@@ -180,8 +181,8 @@ namespace PresenceBridge
 		private System.Windows.Forms.Label labelProductName;
 		private System.Windows.Forms.Label labelVersion;
 		private System.Windows.Forms.Label labelCopyright;
-		private System.Windows.Forms.Label labelCompanyName;
-		private System.Windows.Forms.TextBox textBoxDescription;
 		private System.Windows.Forms.Button okButton;
+		private System.Windows.Forms.LinkLabel linkLabelDescription;
+		private System.Windows.Forms.Label labelCompanyName;
 	}
 }

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("PresenceBridge")]
 [assembly: AssemblyDescription("Controlls LED-Light through serial port and synchronizes with Teams Status. The serial protocol is very simple and a Light such as the LyncDisplayLight (https://github.com/grafmar/LyncDisplayLight) can easily be build up.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("https://github.com/grafmar/PresenceBridge")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PresenceBridge")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyVersion("0.2.0.0")]
+[assembly: AssemblyFileVersion("0.2.0.0")]
 
 // Configuration of Log4Net
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config")]

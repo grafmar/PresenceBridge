@@ -98,6 +98,15 @@ namespace PresenceBridge
 
 		private void ContextMenuAbout(object sender, EventArgs e)
 		{
+			foreach (Form form in System.Windows.Forms.Application.OpenForms)
+			{
+				if (form.GetType() == typeof(AboutWindow))
+				{
+					form.Activate();
+					return;
+				}
+			}
+
 			AboutWindow aboutWindow = new AboutWindow(log);
 			aboutWindow.Show();
 		}
