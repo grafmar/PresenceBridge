@@ -12,10 +12,17 @@ namespace PresenceBridge
 	partial class AboutWindow : Form
 	{
 		private static log4net.ILog log;
+		private static string LogFilePath;
+		private static string SettingsPath;
+		private static string CachePath;
 
-		public AboutWindow(log4net.ILog logger)
+		public AboutWindow(log4net.ILog logger, string setLogFilePath, string setSettingsPath, string setCachePath)
 		{
 			log = logger;
+			LogFilePath = setLogFilePath;
+			SettingsPath = setSettingsPath;
+			CachePath = setCachePath;
+
 			try
 			{
 				InitializeComponent();
@@ -25,9 +32,17 @@ namespace PresenceBridge
 				this.labelCopyright.Text = AssemblyCopyright;
 				this.labelCompanyName.Text = AssemblyCompany;
 
-				this.linkLabelDescription.Text = "https://github.com/grafmar/PresenceBridge \n\nControlls LED-Light through serial port and synchronizes with Teams Status.\n\nThe serial protocol is very simple and a Light such as the LyncDisplayLight can easily be build up.";
+				this.linkLabelDescription.Text = "https://github.com/grafmar/PresenceBridge \n\nControlls LED-Light through serial port and synchronizes with Teams Status.\n\nThe serial protocol is very simple and a Light such as the LyncDisplayLight can easily be build up.\n\nLogs  Settings  Cache";
+				// Link PresenceBridge
 				this.linkLabelDescription.Links.Add(0, 41, "https://github.com/grafmar/PresenceBridge");
+				// Link LyncDisplayLight
 				this.linkLabelDescription.Links.Add(180, 16, "https://github.com/grafmar/LyncDisplayLight");
+				// Link Logs
+				this.linkLabelDescription.Links.Add(222, 4, LogFilePath);
+				// Link Settings
+				this.linkLabelDescription.Links.Add(228, 8, SettingsPath);
+				// Link Cache
+				this.linkLabelDescription.Links.Add(238, 5, CachePath);
 			}
 			catch (Exception ex)
 			{

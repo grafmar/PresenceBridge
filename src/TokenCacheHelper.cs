@@ -21,6 +21,10 @@ namespace PresenceBridge
 
 		private static readonly object FileLock = new object();
 
+		public static string GetCacheFolderPath()
+		{
+			return CacheFolderPath;
+		}
 
 		private static void BeforeAccessNotification(TokenCacheNotificationArgs args)
 		{

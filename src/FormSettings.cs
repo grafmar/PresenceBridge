@@ -14,6 +14,8 @@ using Microsoft.Graph; // NuGet Package
 using Microsoft.Identity; // NuGet Package
 using Microsoft.Identity.Client;
 using Azure.Identity;  // NuGet Package
+using log4net;
+using System.Configuration;  // Add a reference to System.Configuration.dll
 
 
 namespace PresenceBridge
@@ -97,7 +99,22 @@ namespace PresenceBridge
 			radioButtonToSet.Checked = true;
 		}
 
-		private void ContextMenuAbout(object sender, EventArgs e)
+		private static string GetLogFilePath()
+		{
+			var rootAppender = ((log4net.Repository.Hierarchy.Hierarchy)log4net.LogManager.GetRepository())
+											 .Root.Appenders.OfType<log4net.Appender.FileAppender>()
+											 .FirstOrDefault();
+
+			string path = rootAppender != null ? System.IO.Path.GetDirectoryName(rootAppender.File) : string.Empty;
+			return path;
+		}
+		private static string GetSettingsPath()
+		{
+			var filename = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+			var path = System.IO.Path.GetDirectoryName(filename);
+			return path;
+		}
+	private void ContextMenuAbout(object sender, EventArgs e)
 		{
 			foreach (Form form in System.Windows.Forms.Application.OpenForms)
 			{
@@ -108,7 +125,7 @@ namespace PresenceBridge
 				}
 			}
 
-			AboutWindow aboutWindow = new AboutWindow(log);
+			AboutWindow aboutWindow = new AboutWindow(log, GetLogFilePath(), GetSettingsPath(), TokenCacheHelper.GetCacheFolderPath());
 			aboutWindow.Show();
 		}
 
