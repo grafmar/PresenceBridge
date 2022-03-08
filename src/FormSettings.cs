@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -171,20 +172,30 @@ namespace PresenceBridge
 			Properties.Settings.Default.ColorDoNotDisturb = System.Drawing.ColorTranslator.ToHtml(btnDoNotDisturb.BackColor);
 			Properties.Settings.Default.ColorOffline = System.Drawing.ColorTranslator.ToHtml(btnOffline.BackColor);
 			Properties.Settings.Default.Brightness = trackBarBrightness.Value;
-			Properties.Settings.Default.SerialPort = comboBoxSerialPort.Text;
+			var serialPortString = comboBoxSerialPort.Text;
+			Properties.Settings.Default.SerialPort = serialPortString.Substring(0, serialPortString.IndexOf(" "));
 		}
 
 		private void getSerialPorts()
 		{
-			string[] ports = SerialPort.GetPortNames();
-			comboBoxSerialPort.Items.Clear();
-			serialPortConfiguredAvailable = false;
-			foreach (string s in SerialPort.GetPortNames())
+			using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Caption like '%(COM%'"))
 			{
-				comboBoxSerialPort.Items.Add(s);
-				if (s == Properties.Settings.Default.SerialPort)
+				string[] ports = SerialPort.GetPortNames();
+				var portDescriptions = searcher.Get().Cast<ManagementBaseObject>().ToList().Select(p => p["Caption"].ToString());
+				var portList = ports.Select(n => n + " - " + portDescriptions.FirstOrDefault(s => s.Contains(n))).ToList();
+
+				comboBoxSerialPort.Items.Clear();
+				serialPortConfiguredAvailable = false;
+				foreach (string s in portList)
 				{
-					serialPortConfiguredAvailable = true;
+					comboBoxSerialPort.Items.Add(s); // add port with description
+				}
+				foreach (string s in ports)
+				{
+					if (s == Properties.Settings.Default.SerialPort) // check if configured port is available
+					{
+						serialPortConfiguredAvailable = true;
+					}
 				}
 			}
 		}
