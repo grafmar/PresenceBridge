@@ -4,6 +4,26 @@ The serial protocol is very simple and a Light such as the
 [LyncDisplayLight](https://github.com/grafmar/LyncDisplayLight) can easily
 be build up.
 
+
+## Installation
+* Download the latest zipped setup directory from the [Releases](https://github.com/grafmar/PresenceBridge/releases).
+  * Unzip the file
+  * Uninstall previous installed versions of PresenceBridge from within "Add or remove programs"
+  * Execute setup.exe which installs it as application
+* Plug the LyncDisplayLight device in.
+* Start the PresenceBridge application from start menu
+* In Taskbar look for the PresenceBridge-Symbol. Right-Click -> Settings -> set the device listed with `USB-SERIAL CH340` on the drop-down of the "PresenceLight's Serial Port". If no such device is available, check the next steps
+  * Open *Device Manager* to check which serial port it uses (`USB-SERIAL CH340` in *Ports* section)
+    * If the device is not recognized correctely you have to install the driver from http://www.arduined.eu/ch340-windows-8-driver-download/
+* It should be possible to set the colors now by setting the states directly. To show active state choose SyncToTeams at the end.
+* Click on Login to connect to your Teams
+* To automatically start the application on windows startup:
+  * From the start menu type LyncPresenceBridge and right-click on it. Choose *More* -> *Open File Location*
+  * Copy the Application-Link-File
+  * Type "Win"+R  and enter "shell:startup". This should open the Startup folder.
+  * Paste the previous copied Application-Link-File to this Startup folder
+
+
 ## Connecting HW
 The HW it is designed for is the [LyncDisplayLight](https://github.com/grafmar/LyncDisplayLight).
 This is a RGB-LED with a display which can be controlled by the virtual serial port on its USB
