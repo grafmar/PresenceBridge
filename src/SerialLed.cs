@@ -13,6 +13,7 @@ namespace PresenceBridge
 	{
 		SerialPort _serialPort = new SerialPort();
 		private static log4net.ILog log;
+		private static bool alreadyFailedToOpen = false;
 
 		public SerialLed(log4net.ILog logger)
 		{
@@ -47,11 +48,16 @@ namespace PresenceBridge
 				if (!_serialPort.IsOpen)
 				{
 					_serialPort.Open(); // Open serial port
+					alreadyFailedToOpen = false;
 				}
 			}
 			catch (Exception ex)
 			{
-				log.Error("Error opening serial port :" + ex.Message);
+				if (!alreadyFailedToOpen)
+				{
+					log.Error("Error opening serial port :" + ex.Message);
+					alreadyFailedToOpen = true;
+				}
 			}
 		}
 
